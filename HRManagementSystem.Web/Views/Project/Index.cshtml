@@ -1,0 +1,90 @@
+@model IEnumerable<HRManagementSystem.Web.Models.Project>
+
+@{
+    ViewData["Title"] = "Danh sách dự án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Dự án</h1>
+        <p class="text-gray-600">Quản lý các dự án trong hệ thống</p>
+    </div>
+
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="relative w-full sm:w-auto">
+            <input type="text" placeholder="Tìm kiếm dự án..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+        <a asp-action="Create" class="btn btn-primary flex items-center justify-center px-4 py-2">
+            <i class="fas fa-plus mr-2"></i> Tạo dự án mới
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var project in Model)
+        {
+            <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">@project.Name</h3>
+                            <p class="text-gray-500 text-sm">@project.Code</p>
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium @(project.Status == "Active" ? "bg-green-100 text-green-800" : project.Status == "Inactive" ? "bg-red-100 text-red-800" : "bg-yellow-100 text-yellow-800")">
+                            @project.Status
+                        </span>
+                    </div>
+                    
+                    <p class="text-gray-600 mb-4">@project.Description</p>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Loại dự án:</span>
+                            <span class="font-medium">@project.ProjectType</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Ngày bắt đầu:</span>
+                            <span class="font-medium">@(project.StartDate != DateTime.MinValue ? project.StartDate.ToString("dd/MM/yyyy") : "Chưa có")</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Ngày kết thúc:</span>
+                            <span class="font-medium">@(project.EndDate != DateTime.MinValue ? project.EndDate.ToString("dd/MM/yyyy") : "Chưa có")</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Quản lý:</span>
+                            <span class="font-medium">@(project.ProjectManager?.FullName ?? "Chưa có")</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <a asp-action="Edit" asp-route-id="@project.Id" class="btn btn-outline-primary px-3 py-1 text-sm">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@project.Id" class="btn btn-outline-info px-3 py-1 text-sm">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@project.Id" class="btn btn-outline-danger px-3 py-1 text-sm">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                        <a asp-action="AssignEmployees" asp-route-id="@project.Id" class="btn btn-outline-secondary px-3 py-1 text-sm">
+                            <i class="fas fa-user-plus"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    @if (!Model.Any())
+    {
+        <div class="text-center py-12">
+            <i class="fas fa-project-diagram text-5xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-1">Không có dự án nào</h3>
+            <p class="text-gray-500 mb-4">Chưa có dự án nào được tạo trong hệ thống</p>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus mr-2"></i> Tạo dự án đầu tiên
+            </a>
+        </div>
+    }
+</div>

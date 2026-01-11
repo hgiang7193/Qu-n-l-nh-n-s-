@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Quản lý nhân sự</title>
+    <script type="importmap"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        accent: '#10b981',
+                        dark: '#1e293b',
+                        light: '#f8fafc'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="~/css/site.tailwind.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HRManagementSystem.Web.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-white shadow-md">
+        <nav class="navbar">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="navbar-brand flex items-center">
+                            <div class="bg-blue-100 p-2 rounded-lg">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                            <span class="ml-3 font-bold text-xl text-gray-800">Quản lý nhân sự</span>
+                        </div>
+                        <div class="hidden md:ml-10 md:flex md:flex-wrap md:space-x-1">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Employee" asp-action="Index">Nhân Viên</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Position" asp-action="Index">Vị Trí</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Department" asp-action="Index">Phòng Ban</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Shift" asp-action="Index">Ca Làm</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Project" asp-action="Index">Dự Án</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Project" asp-action="AllProjects">Gán NV Dự Án</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Role" asp-action="Index">Vai Trò</a>
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Attendance" asp-action="Index">Chấm Công</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="relative">
+                                <button id="userBtn" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 flex items-center">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium">
+                                        @User.Identity.Name.Substring(0, 1).ToUpper()
+                                    </div>
+                                    <span class="ml-2 text-gray-700">@User.Identity.Name</span> <i class="fas fa-chevron-down ml-1 text-xs"></i>
+                                </button>
+                                <div id="userMenu" class="dropdown-menu hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                                    <a class="dropdown-item" href="#">Đổi Mật Khẩu</a>
+                                    <div class="border-t border-gray-200 my-1"></div>
+                                    <a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Đăng Xuất</a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600" asp-controller="Auth" asp-action="Login">Đăng Nhập</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-8 mt-auto">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">HR Management System</h3>
+                    <p class="text-blue-100">Hệ thống quản lý nhân sự hiện đại, giúp doanh nghiệp quản lý hiệu quả thông tin nhân viên, chấm công, và các quy trình nhân sự.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liên Kết Nhanh</h3>
+                    <ul class="space-y-2">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Index" class="text-blue-100 hover:text-white transition-colors">Trang Chủ</a></li>
+                        <li><a asp-controller="Employee" asp-action="Index" class="text-blue-100 hover:text-white transition-colors">Nhân Viên</a></li>
+                        <li><a asp-controller="Attendance" asp-action="Index" class="text-blue-100 hover:text-white transition-colors">Chấm Công</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy" class="text-blue-100 hover:text-white transition-colors">Chính Sách</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Liên Hệ</h3>
+                    <p class="text-blue-100">Email: support@hrsystem.vn</p>
+                    <p class="text-blue-100">Điện thoại: +84 123 456 789</p>
+                </div>
+            </div>
+            <div class="border-t border-blue-400 mt-8 pt-6 text-center text-blue-200">
+                <p>&copy; 2026 HR Management System. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script>
+        // JavaScript for dropdown menus
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectBtn = document.getElementById('projectBtn');
+            const projectMenu = document.getElementById('projectMenu');
+            const managementBtn = document.getElementById('managementBtn');
+            const managementMenu = document.getElementById('managementMenu');
+            const attendanceBtn = document.getElementById('attendanceBtn');
+            const attendanceMenu = document.getElementById('attendanceMenu');
+            const userBtn = document.getElementById('userBtn');
+            const userMenu = document.getElementById('userMenu');
+
+            function toggleMenu(btn, menu) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    menu.classList.toggle('hidden');
+                });
+            }
+
+            // Close dropdowns when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (!projectBtn.contains(e.target) && !projectMenu.contains(e.target)) {
+                    projectMenu.classList.add('hidden');
+                }
+                if (!managementBtn.contains(e.target) && !managementMenu.contains(e.target)) {
+                    managementMenu.classList.add('hidden');
+                }
+                if (!attendanceBtn.contains(e.target) && !attendanceMenu.contains(e.target)) {
+                    attendanceMenu.classList.add('hidden');
+                }
+                if (!userBtn.contains(e.target) && !userMenu.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+
+            toggleMenu(projectBtn, projectMenu);
+            toggleMenu(managementBtn, managementMenu);
+            toggleMenu(attendanceBtn, attendanceMenu);
+            toggleMenu(userBtn, userMenu);
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

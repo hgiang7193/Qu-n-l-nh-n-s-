@@ -1,0 +1,224 @@
+@{
+    ViewData["Title"] = "Bảng điều khiển quản trị";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Bảng điều khiển quản trị</h1>
+        <p class="text-gray-600">Xin chào, <span class="font-semibold text-blue-600">@User.Identity.Name</span>! Dưới đây là tổng quan về hệ thống quản lý nhân sự của bạn.</p>
+    </div>
+    
+    <!-- Admin Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-transform duration-300 hover:scale-105">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-blue-100 text-blue-600">
+                    <i class="fas fa-users text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Tổng số người dùng</p>
+                    <p class="text-2xl font-bold text-gray-900">@ViewBag.TotalUsers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-transform duration-300 hover:scale-105">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-green-100 text-green-600">
+                    <i class="fas fa-user-check text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Nhân viên hoạt động</p>
+                    <p class="text-2xl font-bold text-gray-900">@ViewBag.ActiveEmployeesCount</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-transform duration-300 hover:scale-105">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-cyan-100 text-cyan-600">
+                    <i class="fas fa-project-diagram text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Dự án</p>
+                    <p class="text-2xl font-bold text-gray-900">@ViewBag.TotalProjects</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 transition-transform duration-300 hover:scale-105">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-yellow-100 text-yellow-600">
+                    <i class="fas fa-clock text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Chấm công hôm nay</p>
+                    <p class="text-2xl font-bold text-gray-900">@(ViewBag.OnTimeCount + ViewBag.LateCount)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Summary Chart and Recent Activity -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Employee Summary Chart -->
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Tóm tắt nhân viên</h3>
+                <div class="chart-pie pt-4">
+                    <canvas id="employeeChart" class="w-full"></canvas>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                        <span class="text-sm text-gray-600">Hoạt động (@ViewBag.ActiveEmployeesCount)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                        <span class="text-sm text-gray-600">Không hoạt động (@ViewBag.InactiveEmployeesCount)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                        <span class="text-sm text-gray-600">Đúng giờ (@ViewBag.OnTimeCount)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
+                        <span class="text-sm text-gray-600">Đi muộn (@ViewBag.LateCount)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+                        <span class="text-sm text-gray-600">Vắng mặt (@ViewBag.AbsentCount)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+                        <span class="text-sm text-gray-600">Nghỉ phép (@ViewBag.LeaveCount)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Hoạt động gần đây</h3>
+                <ul class="divide-y divide-gray-200">
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Đăng nhập vào hệ thống</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Vừa xong</p>
+                    </li>
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Cập nhật thông tin nhân viên</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">10 phút trước</p>
+                    </li>
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Tạo mới dự án ABC</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">1 giờ trước</p>
+                    </li>
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Phê duyệt đơn xin nghỉ</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">2 giờ trước</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Hành động nhanh</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a asp-controller="Employee" asp-action="Index" class="btn btn-primary flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700">
+                <i class="fas fa-users text-xl mb-2"></i>
+                <span>Quản lý nhân viên</span>
+            </a>
+            <a asp-controller="Position" asp-action="Index" class="btn btn-success flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
+                <i class="fas fa-briefcase text-xl mb-2"></i>
+                <span>Quản lý vị trí</span>
+            </a>
+            <a asp-controller="Department" asp-action="Index" class="btn btn-info flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 text-white hover:from-cyan-600 hover:to-cyan-700">
+                <i class="fas fa-sitemap text-xl mb-2"></i>
+                <span>Quản lý phòng ban</span>
+            </a>
+            <a asp-controller="Role" asp-action="Index" class="btn btn-warning flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700">
+                <i class="fas fa-user-tag text-xl mb-2"></i>
+                <span>Quản lý vai trò</span>
+            </a>
+            <a asp-controller="Shift" asp-action="Index" class="btn btn-danger flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700">
+                <i class="fas fa-clock text-xl mb-2"></i>
+                <span>Quản lý ca làm việc</span>
+            </a>
+            <a asp-controller="Project" asp-action="Index" class="btn btn-secondary flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white hover:from-purple-600 hover:to-purple-700">
+                <i class="fas fa-project-diagram text-xl mb-2"></i>
+                <span>Quản lý dự án</span>
+            </a>
+            <a asp-controller="Attendance" asp-action="Index" class="btn btn-dark flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-gray-700 to-gray-800 text-white hover:from-gray-800 hover:to-gray-900">
+                <i class="fas fa-calendar-check text-xl mb-2"></i>
+                <span>Quản lý chấm công</span>
+            </a>
+            <a asp-controller="Project" asp-action="AssignEmployees" class="btn btn-purple flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white hover:from-indigo-600 hover:to-indigo-700">
+                <i class="fas fa-user-plus text-xl mb-2"></i>
+                <span>Gán nhân viên dự án</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Employee Chart
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('employeeChart');
+    var employeeChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Hoạt động', 'Không hoạt động', 'Đúng giờ', 'Đi muộn', 'Vắng mặt', 'Nghỉ phép'],
+            datasets: [{
+                data: [@ViewBag.ActiveEmployeesCount, @ViewBag.InactiveEmployeesCount, @ViewBag.OnTimeCount, @ViewBag.LateCount, @ViewBag.AbsentCount, @ViewBag.LeaveCount],
+                backgroundColor: [
+                    '#28a745',
+                    '#dc3545',
+                    '#2ecc71',
+                    '#f39c12',
+                    '#e74c3c',
+                    '#17a2b8'
+                ],
+                hoverBackgroundColor: [
+                    '#218838',
+                    '#c82333',
+                    '#27ae60',
+                    '#e67e22',
+                    '#c0392b',
+                    '#138496'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#858796',
+                    bodyColor: '#858796',
+                    borderColor: '#dddfeb',
+                    borderWidth: 1,
+                    padding: 15,
+                    displayColors: false,
+                }
+            },
+            cutout: '70%',
+        }
+    });
+});
+</script>

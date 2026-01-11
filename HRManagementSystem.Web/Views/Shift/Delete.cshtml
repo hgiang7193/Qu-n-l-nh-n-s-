@@ -1,0 +1,76 @@
+@model HRManagementSystem.Web.Models.Shift
+
+@{
+    ViewData["Title"] = "Xóa ca làm việc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Xóa ca làm việc</h1>
+        <p class="mt-2 text-gray-600">Bạn có chắc chắn muốn xóa ca làm việc này không?</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 mb-6">
+        <div class="alert alert-warning">
+            <h3 class="text-lg font-medium text-yellow-800">Cảnh báo</h3>
+            <p class="mt-2 text-yellow-700">Hành động này không thể hoàn tác. Ca làm việc sẽ bị xóa vĩnh viễn.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Tên ca làm việc</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Model.Name</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Mô tả</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Model.Description</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Thời gian bắt đầu</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Model.StartTime.ToString(@"hh\:mm")</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Thời gian kết thúc</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Model.EndTime.ToString(@"hh\:mm")</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Trạng thái</p>
+            </div>
+            <div class="md:col-span-2">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium @(Model.Status == "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                    @Model.Status
+                </span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex space-x-4">
+        <form asp-action="DeleteConfirmed" asp-route-id="@Model.Id" method="post">
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+        </form>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>

@@ -1,0 +1,70 @@
+@model HRManagementSystem.Web.Models.Project
+
+@{
+    ViewData["Title"] = "Chi tiết dự án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Chi tiết dự án</h1>
+        <p class="mt-2 text-gray-600">Thông tin chi tiết về dự án</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <dl class="space-y-4">
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Tên dự án</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Name)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Mã dự án</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Code)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Mô tả</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Description)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Ngày bắt đầu</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.StartDate)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Ngày kết thúc</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.EndDate)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Trạng thái</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Status)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Loại dự án</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.ProjectType)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Quản lý dự án</dt>
+                <dd class="col-span-2">@(Model.ProjectManager?.FullName ?? "Chưa có")</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Ngày tạo</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.CreatedAt)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Ngày cập nhật</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.UpdatedAt)</dd>
+            </div>
+        </dl>
+
+        <div class="flex space-x-4 pt-6">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary px-6 py-2 rounded-lg flex items-center">
+                <i class="fas fa-edit mr-2"></i> Sửa
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger px-6 py-2 rounded-lg flex items-center">
+                <i class="fas fa-trash mr-2"></i> Xóa
+            </a>
+            <a asp-action="Index" class="btn btn-secondary px-6 py-2 rounded-lg flex items-center">
+                <i class="fas fa-times mr-2"></i> Quay lại
+            </a>
+        </div>
+    </div>
+</div>

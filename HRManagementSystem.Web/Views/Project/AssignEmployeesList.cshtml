@@ -1,0 +1,53 @@
+@model IEnumerable<HRManagementSystem.Web.Models.Project>
+
+@{
+    ViewData["Title"] = "Danh sách dự án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Danh sách dự án</h1>
+        <p class="mt-2 text-gray-600">Chọn một dự án để phân công nhân viên</p>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            @foreach (var project in Model)
+            {
+                <li>
+                    <div class="block hover:bg-gray-50">
+                        <div class="flex items-center px-4 py-4 sm:px-6">
+                            <div class="min-w-0 flex-1 flex items-center">
+                                <div class="text-sm font-medium text-blue-600 truncate">
+                                    @project.Name
+                                </div>
+                                <div class="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
+                                    <div class="text-sm text-gray-500">
+                                        Mã: <span class="font-medium">@project.Code</span>
+                                    </div>
+                                    <div class="ml-4 text-sm text-gray-500">
+                                        Trạng thái: <span class="font-medium">@project.Status</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <a asp-action="AssignEmployees" asp-route-id="@project.Id" class="btn btn-primary">
+                                    Phân công nhân viên
+                                </a>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 bg-gray-50 sm:px-6 text-sm text-gray-500">
+                            <p>@project.Description</p>
+                            <p class="mt-1">
+                                Thời gian: 
+                                <span class="font-medium">@project.StartDate.ToString("dd/MM/yyyy")</span> - 
+                                <span class="font-medium">@project.EndDate.ToString("dd/MM/yyyy")</span>
+                            </p>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

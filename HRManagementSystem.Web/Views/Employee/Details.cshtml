@@ -1,0 +1,87 @@
+@model HRManagementSystem.Web.Models.User
+
+@{
+    ViewData["Title"] = "Chi tiết nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Chi tiết nhân viên</h1>
+        <p class="mt-2 text-gray-600">Thông tin chi tiết về nhân viên: <span class="font-semibold">@Model.FullName</span></p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <div class="mb-4">
+                    <div class="flex items-center justify-center mb-4">
+                        <div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-2xl">
+                            @Model.FirstName.Substring(0, 1).ToUpper()@Model.LastName.Substring(0, 1).ToUpper()
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-500">Mã nhân viên</p>
+                        <p class="text-sm text-gray-900">@Model.EmployeeCode</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-500">Tên đầy đủ</p>
+                        <p class="text-sm text-gray-900">@Model.FullName</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-500">Tên đăng nhập</p>
+                        <p class="text-sm text-gray-900">@Model.Username</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm font-medium text-gray-500">Email</p>
+                        <p class="text-sm text-gray-900">@Model.Email</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500">Vị trí</p>
+                    <p class="text-sm text-gray-900">@(Model.Position?.Name ?? "Chưa có")</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500">Phòng ban</p>
+                    <p class="text-sm text-gray-900">@(Model.Department?.Name ?? "Chưa có")</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500">Số điện thoại</p>
+                    <p class="text-sm text-gray-900">@(Model.Phone ?? "Chưa có")</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500">Ngày vào làm</p>
+                    <p class="text-sm text-gray-900">@(Model.HireDate?.ToString("dd/MM/yyyy") ?? "Chưa có")</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500">Ghi chú</p>
+                    <p class="text-sm text-gray-900">@(Model.Notes ?? "Chưa có")</p>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-500">Trạng thái</p>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium @(Model.Status == "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                        @(Model.Status == "active" ? "Hoạt động" : "Không hoạt động")
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left mr-2"></i> Quay lại danh sách
+            </a>
+        </div>
+    </div>
+</div>

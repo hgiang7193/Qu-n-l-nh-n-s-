@@ -1,0 +1,67 @@
+@model HRManagementSystem.Web.Models.Shift
+
+@{
+    ViewData["Title"] = "Tạo ca làm việc mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Tạo ca làm việc mới</h1>
+        <p class="mt-2 text-gray-600">Nhập thông tin cho ca làm việc mới</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <form asp-action="Create" method="post" class="space-y-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+            
+            <div>
+                <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-1">Tên ca làm việc *</label>
+                <input asp-for="Name" class="form-control w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+                <span asp-validation-for="Name" class="text-danger text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+                <textarea asp-for="Description" rows="3" class="form-control w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"></textarea>
+                <span asp-validation-for="Description" class="text-danger text-sm"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="StartTime" class="block text-sm font-medium text-gray-700 mb-1">Thời gian bắt đầu *</label>
+                    <input asp-for="StartTime" type="time" class="form-control w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+                    <span asp-validation-for="StartTime" class="text-danger text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="EndTime" class="block text-sm font-medium text-gray-700 mb-1">Thời gian kết thúc *</label>
+                    <input asp-for="EndTime" type="time" class="form-control w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+                    <span asp-validation-for="EndTime" class="text-danger text-sm"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Status" class="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                <select asp-for="Status" class="form-control w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="Active">Hoạt động</option>
+                    <option value="Inactive">Không hoạt động</option>
+                </select>
+                <span asp-validation-for="Status" class="text-danger text-sm"></span>
+            </div>
+
+            <div class="flex space-x-4 pt-4">
+                <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-lg hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center shadow-md hover:shadow-lg">
+                    <i class="fas fa-plus-circle mr-2"></i> Tạo mới
+                </button>
+                <a asp-action="Index" class="px-6 py-2.5 bg-gradient-to-r from-gray-500 to-gray-600 text-white font-medium rounded-lg hover:from-gray-600 hover:to-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200 flex items-center shadow-md hover:shadow-lg">
+                    <i class="fas fa-arrow-left mr-2"></i> Quay lại
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-6">
+        <partial name="_ValidationScriptsPartial" />
+    </div>
+</div>

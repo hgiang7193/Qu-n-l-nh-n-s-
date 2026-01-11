@@ -1,0 +1,49 @@
+@model IEnumerable<HRManagementSystem.Web.Models.Position>
+
+@{
+    ViewData["Title"] = "Vị Trí";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Vị Trí</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus mr-2"></i> Tạo Vị Trí Mới
+    </a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Mô Tả</th>
+            <th>Trạng Thái</th>
+            <th>Ngày Tạo</th>
+            <th>Ngày Cập Nhật</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
+                <td>@Html.DisplayFor(modelItem => item.UpdatedAt)</td>
+                <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary mr-2">
+                                <i class="fas fa-edit mr-1"></i> Sửa
+                            </a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info mr-2">
+                                <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                                <i class="fas fa-trash mr-1"></i> Xóa
+                            </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,73 @@
+@model IEnumerable<HRManagementSystem.Web.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Danh Sách Chấm Công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Danh Sách Chấm Công</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus mr-2"></i> Tạo Mới
+    </a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nhân Viên</th>
+            <th>Ngày</th>
+            <th>Giờ Vào</th>
+            <th>Giờ Ra</th>
+            <th>Trạng Thái</th>
+            <th>Ngày Tạo</th>
+            <th>Hành Động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Employee?.FullName</td>
+                <td>@item.Date.ToString("MM/dd/yyyy")</td>
+                <td>@item.CheckIn?.ToString("HH:mm")</td>
+                <td>@item.CheckOut?.ToString("HH:mm")</td>
+                <td>
+                    @switch (item.Status)
+                    {
+                        case "on_time":
+                            <span class="badge bg-success">Đúng giờ</span>
+                            break;
+                        case "late":
+                            <span class="badge bg-warning">Muộn</span>
+                            break;
+                        case "absent":
+                            <span class="badge bg-danger">Vắng mặt</span>
+                            break;
+                        case "leave":
+                            <span class="badge bg-info">Nghỉ phép</span>
+                            break;
+                        case "holiday":
+                            <span class="badge bg-secondary">Ngày lễ</span>
+                            break;
+                        default:
+                            <span class="badge bg-secondary">@item.Status</span>
+                            break;
+                    }
+                </td>
+                <td>@item.CreatedAt.ToString("MM/dd/yyyy HH:mm")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary mr-2">
+                        <i class="fas fa-edit mr-1"></i> Sửa
+                    </a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info mr-2">
+                        <i class="fas fa-info-circle mr-1"></i> Chi tiết
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger">
+                        <i class="fas fa-trash mr-1"></i> Xóa
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

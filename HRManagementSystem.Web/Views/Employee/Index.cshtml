@@ -1,0 +1,105 @@
+@model IEnumerable<HRManagementSystem.Web.Models.User>
+
+@{
+    ViewData["Title"] = "Danh sách nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Quản lý nhân viên</h1>
+        <p class="text-gray-600">Danh sách nhân viên trong hệ thống với các thông tin chi tiết</p>
+    </div>
+
+    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div class="relative w-full sm:w-auto">
+            <input type="text" placeholder="Tìm kiếm nhân viên..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+        <a asp-action="Create" class="btn btn-primary flex items-center justify-center px-4 py-2">
+            <i class="fas fa-plus mr-2"></i> Thêm nhân viên
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        @foreach (var employee in Model)
+        {
+            <div class="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xl mr-4">
+                            @employee.FullName.Substring(0, 1).ToUpper()
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">@employee.FullName</h3>
+                            <p class="text-gray-500">@employee.EmployeeCode</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Username:</span>
+                            <span class="font-medium">@employee.Username</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Email:</span>
+                            <span class="font-medium">@employee.Email</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Phòng ban:</span>
+                            <span class="font-medium">@(employee.Department?.Name ?? "Chưa phân")</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Vị trí:</span>
+                            <span class="font-medium">@(employee.Position?.Name ?? "Chưa có")</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Vai trò:</span>
+                            <span class="font-medium">
+                                @if (employee.UserRoles != null && employee.UserRoles.Any())
+                                {
+                                    @string.Join(", ", employee.UserRoles.Select(ur => ur.Role.Name))
+                                }
+                                else
+                                {
+                                    <span>Chưa có</span>
+                                }
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium @(employee.Status == "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                            <i class="fas fa-circle mr-1 text-xs"></i>
+                            @(employee.Status == "active" ? "Hoạt động" : "Không hoạt động")
+                        </span>
+                        
+                        <div class="flex space-x-2">
+                            <a asp-action="Edit" asp-route-id="@employee.Id" class="btn btn-outline-primary px-3 py-1 text-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Details" asp-route-id="@employee.Id" class="btn btn-outline-info px-3 py-1 text-sm">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@employee.Id" class="btn btn-outline-danger px-3 py-1 text-sm">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+    @if (!Model.Any())
+    {
+        <div class="text-center py-12">
+            <i class="fas fa-users text-5xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-1">Không có nhân viên nào</h3>
+            <p class="text-gray-500 mb-4">Chưa có nhân viên nào được tạo trong hệ thống</p>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus mr-2"></i> Tạo nhân viên đầu tiên
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,92 @@
+@{
+    ViewData["Title"] = "Bảng điều khiển nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Chào mừng, @ViewBag.Employee?.FullName</h1>
+        <p class="text-gray-600">Dưới đây là thông tin tổng quan về công việc của bạn.</p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg text-white transition-transform duration-300 hover:scale-105">
+            <div class="flex items-center">
+                <div class="p-3 rounded-lg bg-blue-400 text-blue-100">
+                    <i class="fas fa-project-diagram text-xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-blue-100">Dự án đang tham gia</p>
+                    <p class="text-2xl font-bold">@ViewBag.ActiveProjects</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Dự án của tôi</h3>
+                <p class="mb-4">Bạn hiện đang được phân công vào @ViewBag.ActiveProjects dự án.</p>
+                @if (ViewBag.ActiveProjects > 0)
+                {
+                    <p><a asp-controller="Project" asp-action="Index" class="btn btn-primary flex items-center justify-center w-fit">
+                        <i class="fas fa-eye mr-2"></i> Xem dự án của tôi
+                    </a></p>
+                }
+                else
+                {
+                    <p>Hiện tại bạn chưa được phân công vào dự án nào.</p>
+                }
+            </div>
+        </div>
+        
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Hoạt động gần đây</h3>
+                <ul class="divide-y divide-gray-200">
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Đăng nhập vào hệ thống</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Vừa xong</p>
+                    </li>
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Cập nhật hồ sơ cá nhân</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">1 giờ trước</p>
+                    </li>
+                    <li class="py-3">
+                        <div class="flex justify-between">
+                            <p class="font-medium text-gray-900">Gửi báo cáo công việc</p>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-1">Hôm qua</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Hành động nhanh</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <a asp-controller="Employee" asp-action="Details" asp-route-id="@ViewBag.Employee?.Id" class="btn btn-primary flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700">
+                <i class="fas fa-user text-xl mb-2"></i>
+                <span>Xem hồ sơ</span>
+            </a>
+            <a asp-controller="Auth" asp-action="ChangePassword" class="btn btn-success flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
+                <i class="fas fa-key text-xl mb-2"></i>
+                <span>Đổi mật khẩu</span>
+            </a>
+            <a asp-controller="Attendance" asp-action="Index" class="btn btn-info flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-cyan-500 to-cyan-600 text-white hover:from-cyan-600 hover:to-cyan-700">
+                <i class="fas fa-calendar-check text-xl mb-2"></i>
+                <span>Chấm công</span>
+            </a>
+            <a asp-controller="Project" asp-action="Index" class="btn btn-warning flex flex-col items-center justify-center py-4 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 text-white hover:from-amber-600 hover:to-amber-700">
+                <i class="fas fa-tasks text-xl mb-2"></i>
+                <span>Công việc</span>
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,51 @@
+@model HRManagementSystem.Web.Models.Role
+
+@{
+    ViewData["Title"] = "Chi tiết vai trò";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Chi tiết vai trò</h1>
+        <p class="mt-2 text-gray-600">Thông tin chi tiết về vai trò</p>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden rounded-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Tên</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Html.DisplayFor(model => model.Name)</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Mô tả</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Html.DisplayFor(model => model.Description)</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="md:col-span-1">
+                <p class="text-sm font-medium text-gray-500">Ngày tạo</p>
+            </div>
+            <div class="md:col-span-2">
+                <p class="text-sm text-gray-900">@Html.DisplayFor(model => model.CreatedAt)</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex space-x-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="fas fa-edit mr-2"></i> Sửa
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Quay lại danh sách
+        </a>
+    </div>
+</div>
