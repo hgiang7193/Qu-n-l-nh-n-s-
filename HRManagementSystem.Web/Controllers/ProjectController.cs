@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
@@ -15,6 +16,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Project
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             var projects = await _context.Projects
@@ -40,11 +42,25 @@ namespace HRManagementSystem.Web.Controllers
             {
                 return NotFound();
             }
+            
+            // Allow admin to see any project, but regular users can only see projects they are assigned to
+            if (!User.IsInRole("admin"))
+            {
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var isAssignedToProject = await _context.ProjectAssignments
+                    .AnyAsync(pa => pa.ProjectId == id && pa.EmployeeId == userId);
+                    
+                if (!isAssignedToProject)
+                {
+                    return Forbid();
+                }
+            }
 
             return View(project);
         }
 
         // GET: Project/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             ViewBag.ProjectManagers = _context.Users.ToList();
@@ -54,6 +70,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Project/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("Name,Code,Description,StartDate,EndDate,Status,ProjectType,ProjectManagerId")] Project project)
         {
             if (ModelState.IsValid)
@@ -68,6 +85,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Project/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -88,6 +106,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Project/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Code,Description,StartDate,EndDate,Status,ProjectType,ProjectManagerId")] Project project)
         {
             if (id != project.Id)
@@ -122,6 +141,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Project/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,6 +164,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Project/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var project = await _context.Projects.FindAsync(id);
@@ -156,14 +177,35 @@ namespace HRManagementSystem.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Project/AllProjects (shows all projects for assignment)
-        public async Task<IActionResult> AllProjects()
+        // GET: Project/MyProjects (shows projects assigned to the current user)
+        public async Task<IActionResult> MyProjects()
         {
-            var projects = await _context.Projects.ToListAsync();
-            return View("AssignEmployeesList", projects);
+            if (User.IsInRole("admin"))
+            {
+                // Admin can see all projects
+                var projects = await _context.Projects.ToListAsync();
+                return View(projects);
+            }
+            else
+            {
+                // Regular employee can only see projects they are assigned to
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var assignedProjectIds = _context.ProjectAssignments
+                    .Where(pa => pa.EmployeeId == userId)
+                    .Select(pa => pa.ProjectId)
+                    .Distinct()
+                    .ToList();
+                
+                var projects = await _context.Projects
+                    .Where(p => assignedProjectIds.Contains(p.Id))
+                    .ToListAsync();
+                
+                return View("MyProjects", projects);
+            }
         }
 
         // GET: Project/AssignEmployees/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AssignEmployees(int? id)
         {
             if (id == null)
@@ -202,6 +244,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Project/AssignEmployee
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> AssignEmployee(int projectId, int employeeId, string role, DateTime startDate)
         {
             var existingAssignment = await _context.ProjectAssignments
@@ -230,6 +273,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Project/RemoveAssignment/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveAssignment(int id)
         {
             var assignment = await _context.ProjectAssignments.FindAsync(id);

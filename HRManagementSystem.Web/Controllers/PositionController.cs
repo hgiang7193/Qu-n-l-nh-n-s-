@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
@@ -15,6 +16,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Position
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             var positions = await _context.Positions.ToListAsync();
@@ -22,6 +24,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Position/Details/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -40,6 +43,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Position/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
@@ -48,6 +52,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Position/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("Name,Description,Status")] Position position)
         {
             if (ModelState.IsValid)
@@ -62,6 +67,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Position/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -80,6 +86,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Position/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Status")] Position position)
         {
             if (id != position.Id)
@@ -122,6 +129,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Position/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,6 +150,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Position/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var position = await _context.Positions.FindAsync(id);

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
@@ -15,6 +16,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Department
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             var departments = await _context.Departments
@@ -25,6 +27,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Department/Details/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -45,6 +48,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Department/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             ViewBag.Managers = _context.Users.ToList();
@@ -55,6 +59,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Department/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("Name,Code,Description,ParentId,ManagerId,Status")] Department department)
         {
             if (ModelState.IsValid)
@@ -71,6 +76,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Department/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,6 +98,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Department/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Code,Description,ParentId,ManagerId,Status")] Department department)
         {
             if (id != department.Id)
@@ -139,6 +146,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Department/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -161,6 +169,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Department/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var department = await _context.Departments.FindAsync(id);

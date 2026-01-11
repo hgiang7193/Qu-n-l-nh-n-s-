@@ -153,14 +153,14 @@ namespace HRManagementSystem.Web.Services
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Attendances;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM LeaveRequests;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Worklogs;");
-                await _context.Database.ExecuteSqlRawAsync("DELETE FROM Users;");
+                await _context.Database.ExecuteSqlRawAsync("DELETE FROM Departments;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Projects;");
+                await _context.Database.ExecuteSqlRawAsync("DELETE FROM Users;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Roles;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Permissions;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM RolePermission;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Shifts;");
                 await _context.Database.ExecuteSqlRawAsync("DELETE FROM Positions;");
-                await _context.Database.ExecuteSqlRawAsync("DELETE FROM Departments;");
                 await _context.Database.ExecuteSqlRawAsync("SET FOREIGN_KEY_CHECKS = 1;");
             }
             catch (Exception deleteEx)

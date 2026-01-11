@@ -1,0 +1,70 @@
+@model IEnumerable<HRManagementSystem.Web.Models.Project>
+
+@{
+    ViewData["Title"] = "Dự Án Của Tôi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Dự Án Của Tôi</h1>
+        <p class="mt-2 text-gray-600">Danh sách các dự án bạn đang tham gia</p>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        <ul class="divide-y divide-gray-200">
+            @if (Model.Any())
+            {
+                @foreach (var project in Model)
+                {
+                    <li>
+                        <div class="block hover:bg-gray-50">
+                            <div class="flex items-center px-4 py-4 sm:px-6">
+                                <div class="min-w-0 flex-1 flex items-center">
+                                    <div class="text-sm font-medium text-blue-600 truncate">
+                                        @project.Name
+                                    </div>
+                                    <div class="hidden md:ml-4 md:flex md:flex-shrink-0 md:items-center">
+                                        <div class="text-sm text-gray-500">
+                                            Mã: <span class="font-medium">@project.Code</span>
+                                        </div>
+                                        <div class="ml-4 text-sm text-gray-500">
+                                            Trạng thái: <span class="font-medium">@project.Status</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <a asp-controller="Project" asp-action="Details" asp-route-id="@project.Id" class="btn btn-secondary">
+                                        Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="px-4 py-2 bg-gray-50 sm:px-6 text-sm text-gray-500">
+                                <p>@project.Description</p>
+                                <p class="mt-1">
+                                    Thời gian: 
+                                    <span class="font-medium">@project.StartDate.ToString("dd/MM/yyyy")</span> - 
+                                    <span class="font-medium">@project.EndDate.ToString("dd/MM/yyyy")</span>
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                }
+            }
+            else
+            {
+                <li>
+                    <div class="block">
+                        <div class="flex items-center px-4 py-4 sm:px-6">
+                            <div class="min-w-0 flex-1 flex items-center">
+                                <div class="text-sm text-gray-500">
+                                    Bạn hiện không tham gia dự án nào.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</div>

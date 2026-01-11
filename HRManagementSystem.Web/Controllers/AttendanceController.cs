@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
@@ -17,10 +18,24 @@ namespace HRManagementSystem.Web.Controllers
         // GET: Attendance
         public async Task<IActionResult> Index()
         {
-            var attendances = await _context.Attendances
-                .Include(a => a.Employee)
-                .ToListAsync();
-            return View(attendances);
+            if (User.IsInRole("admin"))
+            {
+                // Admin can see all attendance records
+                var attendances = await _context.Attendances
+                    .Include(a => a.Employee)
+                    .ToListAsync();
+                return View(attendances);
+            }
+            else
+            {
+                // Regular employee can only see their own attendance
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var employeeAttendances = await _context.Attendances
+                    .Include(a => a.Employee)
+                    .Where(a => a.EmployeeId == userId)
+                    .ToListAsync();
+                return View(employeeAttendances);
+            }
         }
 
         // GET: Attendance/Details/5
@@ -34,15 +49,24 @@ namespace HRManagementSystem.Web.Controllers
             var attendance = await _context.Attendances
                 .Include(a => a.Employee)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (attendance == null)
             {
                 return NotFound();
+            }
+
+            // Allow admin to see any attendance record, but regular users can only see their own
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            if (!User.IsInRole("admin") && attendance.EmployeeId != userId)
+            {
+                return Forbid(); // Return forbidden if not admin and not their own record
             }
 
             return View(attendance);
         }
 
         // GET: Attendance/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             ViewBag.Employees = _context.Users.ToList();
@@ -52,6 +76,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Attendance/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("EmployeeId,Date,CheckIn,CheckOut,Status")] Attendance attendance)
         {
             if (ModelState.IsValid)
@@ -66,6 +91,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Attendance/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -86,6 +112,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Attendance/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,EmployeeId,Date,CheckIn,CheckOut,Status,CreatedAt")] Attendance attendance)
         {
             if (id != attendance.Id)
@@ -118,6 +145,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Attendance/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -139,6 +167,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Attendance/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var attendance = await _context.Attendances.FindAsync(id);

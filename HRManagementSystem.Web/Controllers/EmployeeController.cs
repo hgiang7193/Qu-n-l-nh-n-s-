@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
@@ -17,14 +18,30 @@ namespace HRManagementSystem.Web.Controllers
         // GET: Employee
         public async Task<IActionResult> Index()
         {
-            var employees = await _context.Users
-                .Include(u => u.Department)
-                .Include(u => u.Position)
-                .Include(u => u.UserRoles)
-                .ThenInclude(ur => ur.Role)
-                .ToListAsync();
-
-            return View(employees);
+            if (User.IsInRole("admin"))
+            {
+                // Admin can see all employees
+                var employees = await _context.Users
+                    .Include(u => u.Department)
+                    .Include(u => u.Position)
+                    .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                    .ToListAsync();
+                return View(employees);
+            }
+            else
+            {
+                // Regular employee can only see their own information
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var employee = await _context.Users
+                    .Include(u => u.Department)
+                    .Include(u => u.Position)
+                    .Include(u => u.UserRoles)
+                    .ThenInclude(ur => ur.Role)
+                    .Where(u => u.Id == userId)
+                    .ToListAsync();
+                return View(employee);
+            }
         }
 
         // GET: Employee/Details/5
@@ -35,21 +52,29 @@ namespace HRManagementSystem.Web.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users
+            var employee = await _context.Users
                 .Include(u => u.Department)
                 .Include(u => u.Position)
                 .Include(u => u.Manager)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (user == null)
+            
+            if (employee == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            // Allow admin to see any employee, but regular users can only see their own profile
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            if (!User.IsInRole("admin") && employee.Id != userId)
+            {
+                return Forbid(); // Return forbidden if not admin and not their own profile
+            }
+
+            return View(employee);
         }
 
         // GET: Employee/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             ViewBag.Departments = _context.Departments.ToList();
@@ -61,6 +86,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("Username,Email,FirstName,LastName,EmployeeCode,DepartmentId,PositionId,ManagerId,HireDate,Phone,Status")] User user)
         {
             if (ModelState.IsValid)
@@ -85,6 +111,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Employee/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -107,6 +134,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Employee/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Username,Email,FirstName,LastName,EmployeeCode,DepartmentId,PositionId,ManagerId,HireDate,Phone,Notes,Status")] User user)
         {
             if (id != user.Id)
@@ -143,6 +171,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Employee/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -166,6 +195,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Employee/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var user = await _context.Users.FindAsync(id);

@@ -31,22 +31,25 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
-                        <div class="navbar-brand flex items-center">
+                        <a asp-controller="Home" asp-action="Index" class="navbar-brand flex items-center">
                             <div class="bg-blue-100 p-2 rounded-lg">
                                 <i class="fas fa-users text-blue-600 text-xl"></i>
                             </div>
                             <span class="ml-3 font-bold text-xl text-gray-800">Quản lý nhân sự</span>
-                        </div>
+                        </a>
                         <div class="hidden md:ml-10 md:flex md:flex-wrap md:space-x-1">
                             @if (User.Identity.IsAuthenticated)
                             {
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Employee" asp-action="Index">Nhân Viên</a>
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Position" asp-action="Index">Vị Trí</a>
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Department" asp-action="Index">Phòng Ban</a>
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Shift" asp-action="Index">Ca Làm</a>
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Project" asp-action="Index">Dự Án</a>
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Project" asp-action="AllProjects">Gán NV Dự Án</a>
-                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Role" asp-action="Index">Vai Trò</a>
+                                @if (User.IsInRole("admin"))
+                                {
+                                    <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Employee" asp-action="Index">Nhân Viên</a>
+                                    <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Position" asp-action="Index">Vị Trí</a>
+                                    <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Department" asp-action="Index">Phòng Ban</a>
+                                    <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Shift" asp-action="Index">Ca Làm</a>
+                                    <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Project" asp-action="Index">Dự Án</a>
+                                    <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Role" asp-action="Index">Vai Trò</a>
+                                }
+                                <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Project" asp-action="MyProjects">Dự Án Của Tôi</a>
                                 <a class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-600 whitespace-nowrap" asp-controller="Attendance" asp-action="Index">Chấm Công</a>
                             }
                         </div>
@@ -61,10 +64,12 @@
                                     </div>
                                     <span class="ml-2 text-gray-700">@User.Identity.Name</span> <i class="fas fa-chevron-down ml-1 text-xs"></i>
                                 </button>
-                                <div id="userMenu" class="dropdown-menu hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                                    <a class="dropdown-item" href="#">Đổi Mật Khẩu</a>
-                                    <div class="border-t border-gray-200 my-1"></div>
-                                    <a class="dropdown-item" asp-controller="Auth" asp-action="Logout">Đăng Xuất</a>
+                                <div id="userMenu" class="hidden absolute right-0 mt-1 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
+                                    <div class="py-1">
+                                        <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" href="#">Đổi Mật Khẩu</a>
+                                        <div class="border-t border-gray-200 my-1"></div>
+                                        <a class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" asp-controller="Auth" asp-action="Logout">Đăng Xuất</a>
+                                    </div>
                                 </div>
                             </div>
                         }
@@ -129,6 +134,12 @@
                     menu.classList.toggle('hidden');
                 });
             }
+
+            // Specific handler for user menu
+            userBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                userMenu.classList.toggle('hidden');
+            });
 
             // Close dropdowns when clicking elsewhere
             document.addEventListener('click', function(e) {

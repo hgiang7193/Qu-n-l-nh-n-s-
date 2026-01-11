@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Truy Cập Bị Từ Chối";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 border border-red-200">
+        <div class="text-center">
+            <div class="text-red-500 text-6xl mb-4">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Truy Cập Bị Từ Chối</h1>
+            <p class="text-gray-600 mb-6">Bạn không có quyền truy cập vào trang này.</p>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-primary px-6 py-2 rounded-lg">
+                <i class="fas fa-home mr-2"></i>Quay về trang chủ
+            </a>
+        </div>
+    </div>
+</div>

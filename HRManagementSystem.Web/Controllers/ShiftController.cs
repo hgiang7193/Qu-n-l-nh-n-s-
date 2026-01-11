@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Models;
@@ -15,12 +16,14 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Shift
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Shifts.ToListAsync());
         }
 
         // GET: Shift/Details/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -39,6 +42,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Shift/Create
+        [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
             return View();
@@ -47,6 +51,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Shift/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("Id,Name,Description,StartTime,EndTime,Status")] Shift shift)
         {
             if (ModelState.IsValid)
@@ -59,6 +64,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Shift/Edit/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,6 +83,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Shift/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,StartTime,EndTime,Status,CreatedAt")] Shift shift)
         {
             if (id != shift.Id)
@@ -108,6 +115,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Shift/Delete/5
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -128,6 +136,7 @@ namespace HRManagementSystem.Web.Controllers
         // POST: Shift/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var shift = await _context.Shifts.FindAsync(id);
