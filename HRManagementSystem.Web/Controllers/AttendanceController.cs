@@ -207,7 +207,21 @@ namespace HRManagementSystem.Web.Controllers
         [Authorize]
         public async Task<IActionResult> CheckIn()
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
+            {
+                TempData["Error"] = "Không thể xác định người dùng. Vui lòng đăng nhập lại.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify user exists in database
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                TempData["Error"] = "Người dùng không tồn tại trong hệ thống.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var today = DateTime.Today;
 
             // Check if already checked in today
@@ -256,7 +270,21 @@ namespace HRManagementSystem.Web.Controllers
         [Authorize]
         public async Task<IActionResult> CheckOut()
         {
-            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out var userId))
+            {
+                TempData["Error"] = "Không thể xác định người dùng. Vui lòng đăng nhập lại.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Verify user exists in database
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                TempData["Error"] = "Người dùng không tồn tại trong hệ thống.";
+                return RedirectToAction(nameof(Index));
+            }
+
             var today = DateTime.Today;
 
             var attendance = await _context.Attendances
