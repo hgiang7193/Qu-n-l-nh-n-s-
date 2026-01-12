@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
 using HRManagementSystem.Web.Models;
 
+using AutoMapper;
+using HRManagementSystem.Web.Models.Dtos;
+
 namespace HRManagementSystem.Web.Controllers.Api
 {
     [ApiController]
@@ -10,15 +13,17 @@ namespace HRManagementSystem.Web.Controllers.Api
     public class EmployeeApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public EmployeeApiController(ApplicationDbContext context)
+        public EmployeeApiController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/EmployeeApi
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetEmployees()
+        public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetEmployees()
         {
             var employees = await _context.Users
                 .Include(u => u.Department)
@@ -27,12 +32,12 @@ namespace HRManagementSystem.Web.Controllers.Api
                 .ThenInclude(ur => ur.Role)
                 .ToListAsync();
 
-            return Ok(employees);
+            return Ok(_mapper.Map<IEnumerable<EmployeeDto>>(employees));
         }
 
         // GET: api/EmployeeApi/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetEmployee(int id)
+        public async Task<ActionResult<EmployeeDto>> GetEmployee(int id)
         {
             var employee = await _context.Users
                 .Include(u => u.Department)
@@ -46,28 +51,35 @@ namespace HRManagementSystem.Web.Controllers.Api
                 return NotFound();
             }
 
-            return Ok(employee);
+            return Ok(_mapper.Map<EmployeeDto>(employee));
         }
 
         // POST: api/EmployeeApi
         [HttpPost]
-        public async Task<ActionResult<User>> PostEmployee(User employee)
+        public async Task<ActionResult<EmployeeDto>> PostEmployee(CreateEmployeeDto createEmployeeDto)
         {
+            var employee = _mapper.Map<User>(createEmployeeDto);
+            employee.PasswordHash = BCrypt.Net.BCrypt.HashPassword(createEmployeeDto.Password);
+
             _context.Users.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee);
+            var employeeDto = _mapper.Map<EmployeeDto>(employee);
+
+            return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employeeDto);
         }
 
         // PUT: api/EmployeeApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, User employee)
+        public async Task<IActionResult> PutEmployee(int id, UpdateEmployeeDto updateEmployeeDto)
         {
-            if (id != employee.Id)
+            var employee = await _context.Users.FindAsync(id);
+            if (employee == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            _mapper.Map(updateEmployeeDto, employee);
             _context.Entry(employee).State = EntityState.Modified;
 
             try

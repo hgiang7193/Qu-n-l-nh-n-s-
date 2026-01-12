@@ -106,3 +106,11 @@ D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\obj\Debug\net9.0
 D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\obj\Debug\net9.0\compressed\cmy6yld5bh-{0}-0visjrb9g2-0visjrb9g2.gz
 D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\obj\Debug\net9.0\swae.build.ex.cache
 D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\obj\Debug\net9.0\HRManagementSystem.Web.sourcelink.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\AutoMapper.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\publish\web.config
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\publish\appsettings.Development.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\publish\appsettings.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\publish\HRManagementSystem.Web.deps.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\publish\HRManagementSystem.Web.runtimeconfig.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\bin\Debug\net9.0\publish\HRManagementSystem.Web.staticwebassets.endpoints.json

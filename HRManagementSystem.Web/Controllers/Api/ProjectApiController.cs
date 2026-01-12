@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Models;
 using HRManagementSystem.Web.Data;
 
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using HRManagementSystem.Web.Models.Dtos;
+
 namespace HRManagementSystem.Web.Controllers.Api
 {
     [ApiController]
@@ -10,27 +14,29 @@ namespace HRManagementSystem.Web.Controllers.Api
     public class ProjectApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProjectApiController(ApplicationDbContext context)
+        public ProjectApiController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Project
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Project>>> GetProjects()
+        public async Task<ActionResult<IEnumerable<ProjectDto>>> GetProjects()
         {
             return await _context.Projects
-                .Include(p => p.ProjectManager)
+                .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
         // GET: api/Project/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProject(int id)
+        public async Task<ActionResult<ProjectDto>> GetProject(int id)
         {
             var project = await _context.Projects
-                .Include(p => p.ProjectManager)
+                .ProjectTo<ProjectDto>(_mapper.ConfigurationProvider)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (project == null)
@@ -43,23 +49,30 @@ namespace HRManagementSystem.Web.Controllers.Api
 
         // POST: api/Project
         [HttpPost]
-        public async Task<ActionResult<Project>> PostProject(Project project)
+        public async Task<ActionResult<ProjectDto>> PostProject(CreateProjectDto createProjectDto)
         {
+            var project = _mapper.Map<Project>(createProjectDto);
+
             _context.Projects.Add(project);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetProject), new { id = project.Id }, project);
+            var projectDto = _mapper.Map<ProjectDto>(project);
+
+            return CreatedAtAction(nameof(GetProject), new { id = project.Id }, projectDto);
         }
 
         // PUT: api/Project/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProject(int id, Project project)
+        public async Task<IActionResult> PutProject(int id, UpdateProjectDto updateProjectDto)
         {
-            if (id != project.Id)
+            var project = await _context.Projects.FindAsync(id);
+
+            if (project == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            _mapper.Map(updateProjectDto, project);
             _context.Entry(project).State = EntityState.Modified;
 
             try

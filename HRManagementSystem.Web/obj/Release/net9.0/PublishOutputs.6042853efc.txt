@@ -1,0 +1,15 @@
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\HRManagementSystem.Web.exe
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\appsettings.Development.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\appsettings.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\HRManagementSystem.Web.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\HRManagementSystem.Web.runtimeconfig.json
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\HRManagementSystem.Web.pdb
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\AutoMapper.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\BCrypt.Net-Core.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\Microsoft.EntityFrameworkCore.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\Microsoft.EntityFrameworkCore.Abstractions.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\Microsoft.EntityFrameworkCore.Relational.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\MySqlConnector.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\Pomelo.EntityFrameworkCore.MySql.dll
+D:\Downloads\download\HRManagementSystem\HRManagementSystem.Web\publish\HRManagementSystem.Web.deps.json

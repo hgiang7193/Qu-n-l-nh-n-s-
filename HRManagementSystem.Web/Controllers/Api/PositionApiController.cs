@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
 using HRManagementSystem.Web.Models;
 
+using AutoMapper;
+using HRManagementSystem.Web.Models.Dtos;
+
 namespace HRManagementSystem.Web.Controllers.Api
 {
     [ApiController]
@@ -10,24 +13,25 @@ namespace HRManagementSystem.Web.Controllers.Api
     public class PositionApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public PositionApiController(ApplicationDbContext context)
+        public PositionApiController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/PositionApi
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
+        public async Task<ActionResult<IEnumerable<PositionDto>>> GetPositions()
         {
             var positions = await _context.Positions.ToListAsync();
-
-            return Ok(positions);
+            return Ok(_mapper.Map<IEnumerable<PositionDto>>(positions));
         }
 
         // GET: api/PositionApi/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Position>> GetPosition(int id)
+        public async Task<ActionResult<PositionDto>> GetPosition(int id)
         {
             var position = await _context.Positions.FindAsync(id);
 
@@ -36,28 +40,33 @@ namespace HRManagementSystem.Web.Controllers.Api
                 return NotFound();
             }
 
-            return Ok(position);
+            return Ok(_mapper.Map<PositionDto>(position));
         }
 
         // POST: api/PositionApi
         [HttpPost]
-        public async Task<ActionResult<Position>> PostPosition(Position position)
+        public async Task<ActionResult<PositionDto>> PostPosition(CreatePositionDto createPositionDto)
         {
+            var position = _mapper.Map<Position>(createPositionDto);
             _context.Positions.Add(position);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPosition), new { id = position.Id }, position);
+            var positionDto = _mapper.Map<PositionDto>(position);
+
+            return CreatedAtAction(nameof(GetPosition), new { id = position.Id }, positionDto);
         }
 
         // PUT: api/PositionApi/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPosition(int id, Position position)
+        public async Task<IActionResult> PutPosition(int id, UpdatePositionDto updatePositionDto)
         {
-            if (id != position.Id)
+            var position = await _context.Positions.FindAsync(id);
+            if (position == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            _mapper.Map(updatePositionDto, position);
             _context.Entry(position).State = EntityState.Modified;
 
             try

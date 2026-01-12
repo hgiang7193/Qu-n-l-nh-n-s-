@@ -16,17 +16,38 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Project
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            var projects = await _context.Projects
-                .Include(p => p.ProjectManager)
-                .ToListAsync();
-
-            return View(projects);
+            if (User.IsInRole("admin"))
+            {
+                // Admin can see all projects
+                var allProjects = await _context.Projects
+                    .Include(p => p.ProjectManager)
+                    .ToListAsync();
+                return View(allProjects);
+            }
+            else
+            {
+                // Regular employee can only see projects they are assigned to
+                var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+                var assignedProjectIds = _context.ProjectAssignments
+                    .Where(pa => pa.EmployeeId == userId && pa.Status == "active")
+                    .Select(pa => pa.ProjectId)
+                    .Distinct()
+                    .ToList();
+                
+                var employeeProjects = await _context.Projects
+                    .Include(p => p.ProjectManager)
+                    .Where(p => assignedProjectIds.Contains(p.Id))
+                    .ToListAsync();
+                
+                return View(employeeProjects);
+            }
         }
 
         // GET: Project/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -48,7 +69,7 @@ namespace HRManagementSystem.Web.Controllers
             {
                 var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
                 var isAssignedToProject = await _context.ProjectAssignments
-                    .AnyAsync(pa => pa.ProjectId == id && pa.EmployeeId == userId);
+                    .AnyAsync(pa => pa.ProjectId == id && pa.EmployeeId == userId && pa.Status == "active");
                     
                 if (!isAssignedToProject)
                 {
@@ -63,7 +84,13 @@ namespace HRManagementSystem.Web.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
-            ViewBag.ProjectManagers = _context.Users.ToList();
+            ViewBag.ProjectManagers = _context.Users
+                .Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = u.Id.ToString(), 
+                    Text = $"{u.FirstName} {u.LastName}" 
+                })
+                .ToList();
             return View();
         }
 
@@ -99,7 +126,13 @@ namespace HRManagementSystem.Web.Controllers
                 return NotFound();
             }
 
-            ViewBag.ProjectManagers = _context.Users.ToList();
+            ViewBag.ProjectManagers = _context.Users
+                .Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = u.Id.ToString(), 
+                    Text = $"{u.FirstName} {u.LastName}" 
+                })
+                .ToList();
             return View(project);
         }
 
@@ -178,6 +211,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Project/MyProjects (shows projects assigned to the current user)
+        [Authorize]
         public async Task<IActionResult> MyProjects()
         {
             if (User.IsInRole("admin"))

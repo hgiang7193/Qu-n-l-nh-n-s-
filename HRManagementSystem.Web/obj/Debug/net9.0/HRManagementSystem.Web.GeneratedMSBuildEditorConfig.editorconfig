@@ -50,6 +50,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXR0ZW5kYW5jZVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/Downloads/download/HRManagementSystem/HRManagementSystem.Web/Views/Attendance/CreateManual.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXR0ZW5kYW5jZVxDcmVhdGVNYW51YWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/Downloads/download/HRManagementSystem/HRManagementSystem.Web/Views/Attendance/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXR0ZW5kYW5jZVxEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 

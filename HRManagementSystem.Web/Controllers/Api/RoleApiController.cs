@@ -1,70 +1,75 @@
+using AutoMapper;
+using HRManagementSystem.Web.Models.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Data;
 using HRManagementSystem.Web.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HRManagementSystem.Web.Controllers.Api
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/roles")]
     public class RoleApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public RoleApiController(ApplicationDbContext context)
+        public RoleApiController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        // GET: api/RoleApi
+        // GET: api/roles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
-            var roles = await _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .ToListAsync();
-
-            return Ok(roles);
+            var roles = await _context.Roles.ToListAsync();
+            return Ok(_mapper.Map<IEnumerable<RoleDto>>(roles));
         }
 
-        // GET: api/RoleApi/5
+        // GET: api/roles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Role>> GetRole(int id)
+        public async Task<ActionResult<RoleDto>> GetRole(int id)
         {
-            var role = await _context.Roles
-                .Include(r => r.RolePermissions)
-                .ThenInclude(rp => rp.Permission)
-                .FirstOrDefaultAsync(r => r.Id == id);
+            var role = await _context.Roles.FindAsync(id);
 
             if (role == null)
             {
                 return NotFound();
             }
 
-            return Ok(role);
+            return Ok(_mapper.Map<RoleDto>(role));
         }
 
-        // POST: api/RoleApi
+        // POST: api/roles
         [HttpPost]
-        public async Task<ActionResult<Role>> PostRole(Role role)
+        public async Task<ActionResult<RoleDto>> PostRole(CreateRoleDto createRoleDto)
         {
+            var role = _mapper.Map<Role>(createRoleDto);
+
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRole), new { id = role.Id }, role);
+            var roleDto = _mapper.Map<RoleDto>(role);
+
+            return CreatedAtAction(nameof(GetRole), new { id = roleDto.Id }, roleDto);
         }
 
-        // PUT: api/RoleApi/5
+        // PUT: api/roles/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
+        public async Task<IActionResult> PutRole(int id, UpdateRoleDto updateRoleDto)
         {
-            if (id != role.Id)
+            var roleFromDb = await _context.Roles.FindAsync(id);
+
+            if (roleFromDb == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(role).State = EntityState.Modified;
+            _mapper.Map(updateRoleDto, roleFromDb);
 
             try
             {
@@ -85,7 +90,7 @@ namespace HRManagementSystem.Web.Controllers.Api
             return NoContent();
         }
 
-        // DELETE: api/RoleApi/5
+        // DELETE: api/roles/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {

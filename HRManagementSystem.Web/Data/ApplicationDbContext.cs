@@ -21,6 +21,7 @@ namespace HRManagementSystem.Web.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<Worklog> Worklogs { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Shift> Shifts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

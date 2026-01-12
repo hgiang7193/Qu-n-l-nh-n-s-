@@ -9,6 +9,7 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllersWithViews(); // This includes both MVC and API controllers
 
 // Add TempData service required for MVC

@@ -16,6 +16,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Attendance
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             if (User.IsInRole("admin"))
@@ -39,6 +40,7 @@ namespace HRManagementSystem.Web.Controllers
         }
 
         // GET: Attendance/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -65,20 +67,33 @@ namespace HRManagementSystem.Web.Controllers
             return View(attendance);
         }
 
-        // GET: Attendance/Create
-        [Authorize(Roles = "admin")]
+        // GET: Attendance/Create - For employee to check in/out automatically
+        [Authorize]
         public IActionResult Create()
         {
+            // Only show form for admin to manually add attendance
+            if (!User.IsInRole("admin"))
+            {
+                return View(); // Show the simple check-in/out view for employees
+            }
+
+            // For admin, show the full form
             ViewBag.Employees = _context.Users.ToList();
-            return View();
+            return View("CreateManual"); // Separate view for admin to manually add
         }
 
         // POST: Attendance/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("EmployeeId,Date,CheckIn,CheckOut,Status")] Attendance attendance)
         {
+            // Admin only for manual attendance creation
+            if (!User.IsInRole("admin") && attendance.EmployeeId != int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0"))
+            {
+                return Forbid();
+            }
+
             if (ModelState.IsValid)
             {
                 attendance.CreatedAt = DateTime.UtcNow;
@@ -86,7 +101,13 @@ namespace HRManagementSystem.Web.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Employees = _context.Users.ToList();
+            
+            if (User.IsInRole("admin"))
+            {
+                ViewBag.Employees = _context.Users.ToList();
+                return View("CreateManual", attendance);
+            }
+            
             return View(attendance);
         }
 
@@ -177,6 +198,88 @@ namespace HRManagementSystem.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Attendance/CheckIn - Employee checks in
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> CheckIn()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var today = DateTime.Today;
+
+            // Check if already checked in today
+            var existingAttendance = await _context.Attendances
+                .FirstOrDefaultAsync(a => a.EmployeeId == userId && a.Date == today);
+
+            if (existingAttendance != null && existingAttendance.CheckIn != null)
+            {
+                TempData["Message"] = "Bạn đã chấm công vào hôm nay rồi.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var currentDateTime = DateTime.Now;
+            TimeSpan currentTime = currentDateTime.TimeOfDay;
+            TimeSpan workStartTime = new TimeSpan(8, 0, 0); // 8:00 AM
+            
+            string status = currentTime <= workStartTime ? "on_time" : "late";
+
+            if (existingAttendance == null)
+            {
+                var attendance = new Attendance
+                {
+                    EmployeeId = userId,
+                    Date = today,
+                    CheckIn = currentDateTime,
+                    Status = status,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Attendances.Add(attendance);
+            }
+            else
+            {
+                existingAttendance.CheckIn = currentDateTime;
+                existingAttendance.Status = status;
+                _context.Update(existingAttendance);
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Message"] = $"Chấm công vào lúc {currentTime:HH:mm:ss}. Trạng thái: {(status == "on_time" ? "Đúng giờ" : "Trễ")}";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Attendance/CheckOut - Employee checks out
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> CheckOut()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var today = DateTime.Today;
+
+            var attendance = await _context.Attendances
+                .FirstOrDefaultAsync(a => a.EmployeeId == userId && a.Date == today);
+
+            if (attendance == null || attendance.CheckIn == null)
+            {
+                TempData["Message"] = "Bạn chưa chấm công vào hôm nay.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (attendance.CheckOut != null)
+            {
+                TempData["Message"] = "Bạn đã chấm công ra hôm nay rồi.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var currentDateTime = DateTime.Now;
+            attendance.CheckOut = currentDateTime;
+            _context.Update(attendance);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = $"Chấm công ra lúc {currentDateTime:HH:mm:ss}";
             return RedirectToAction(nameof(Index));
         }
 

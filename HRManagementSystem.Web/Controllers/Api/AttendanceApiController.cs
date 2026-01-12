@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Models;
 using HRManagementSystem.Web.Data;
+using HRManagementSystem.Web.Models.Dtos;
+using AutoMapper;
 
 namespace HRManagementSystem.Web.Controllers.Api
 {
@@ -10,24 +12,28 @@ namespace HRManagementSystem.Web.Controllers.Api
     public class AttendanceApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public AttendanceApiController(ApplicationDbContext context)
+        public AttendanceApiController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Attendance
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Attendance>>> GetAttendances()
+        public async Task<ActionResult<IEnumerable<AttendanceDto>>> GetAttendances()
         {
-            return await _context.Attendances
+            var attendances = await _context.Attendances
                 .Include(a => a.Employee)
                 .ToListAsync();
+
+            return Ok(_mapper.Map<IEnumerable<AttendanceDto>>(attendances));
         }
 
         // GET: api/Attendance/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Attendance>> GetAttendance(int id)
+        public async Task<ActionResult<AttendanceDto>> GetAttendance(int id)
         {
             var attendance = await _context.Attendances
                 .Include(a => a.Employee)
@@ -38,28 +44,32 @@ namespace HRManagementSystem.Web.Controllers.Api
                 return NotFound();
             }
 
-            return attendance;
+            return Ok(_mapper.Map<AttendanceDto>(attendance));
         }
 
         // POST: api/Attendance
         [HttpPost]
-        public async Task<ActionResult<Attendance>> PostAttendance(Attendance attendance)
+        public async Task<ActionResult<AttendanceDto>> PostAttendance(CreateAttendanceDto createAttendanceDto)
         {
+            var attendance = _mapper.Map<Attendance>(createAttendanceDto);
             _context.Attendances.Add(attendance);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetAttendance), new { id = attendance.Id }, attendance);
+            var attendanceDto = _mapper.Map<AttendanceDto>(attendance);
+            return CreatedAtAction(nameof(GetAttendance), new { id = attendance.Id }, attendanceDto);
         }
 
         // PUT: api/Attendance/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAttendance(int id, Attendance attendance)
+        public async Task<IActionResult> PutAttendance(int id, UpdateAttendanceDto updateAttendanceDto)
         {
-            if (id != attendance.Id)
+            var attendance = await _context.Attendances.FindAsync(id);
+            if (attendance == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            _mapper.Map(updateAttendanceDto, attendance);
             _context.Entry(attendance).State = EntityState.Modified;
 
             try

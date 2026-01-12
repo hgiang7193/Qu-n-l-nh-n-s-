@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 using HRManagementSystem.Web.Models;
 using HRManagementSystem.Web.Data;
 
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using HRManagementSystem.Web.Models.Dtos;
+
 namespace HRManagementSystem.Web.Controllers.Api
 {
     [ApiController]
@@ -10,24 +14,30 @@ namespace HRManagementSystem.Web.Controllers.Api
     public class ShiftApiController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ShiftApiController(ApplicationDbContext context)
+        public ShiftApiController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Shift
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Shift>>> GetShifts()
+        public async Task<ActionResult<IEnumerable<ShiftDto>>> GetShifts()
         {
-            return await _context.Shifts.ToListAsync();
+            return await _context.Shifts
+                .ProjectTo<ShiftDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
         }
 
         // GET: api/Shift/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Shift>> GetShift(int id)
+        public async Task<ActionResult<ShiftDto>> GetShift(int id)
         {
-            var shift = await _context.Shifts.FindAsync(id);
+            var shift = await _context.Shifts
+                .ProjectTo<ShiftDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(s => s.Id == id);
 
             if (shift == null)
             {
@@ -39,23 +49,30 @@ namespace HRManagementSystem.Web.Controllers.Api
 
         // POST: api/Shift
         [HttpPost]
-        public async Task<ActionResult<Shift>> PostShift(Shift shift)
+        public async Task<ActionResult<ShiftDto>> PostShift(CreateShiftDto createShiftDto)
         {
+            var shift = _mapper.Map<Shift>(createShiftDto);
+
             _context.Shifts.Add(shift);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetShift), new { id = shift.Id }, shift);
+            var shiftDto = _mapper.Map<ShiftDto>(shift);
+
+            return CreatedAtAction(nameof(GetShift), new { id = shift.Id }, shiftDto);
         }
 
         // PUT: api/Shift/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutShift(int id, Shift shift)
+        public async Task<IActionResult> PutShift(int id, UpdateShiftDto updateShiftDto)
         {
-            if (id != shift.Id)
+            var shift = await _context.Shifts.FindAsync(id);
+
+            if (shift == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
+            _mapper.Map(updateShiftDto, shift);
             _context.Entry(shift).State = EntityState.Modified;
 
             try
