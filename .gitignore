@@ -1,0 +1,207 @@
+# Build Results of Visual Studio
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]ogs/
+
+# Visual Studio 2015/2017/2019
+*.VC.db
+*.VC.VC.opendb
+.vs/
+.vsconfig
+appsettings.Production.json
+appsettings.Staging.json
+
+# Visual Studio Code
+.vscode/
+
+# NuGet Packages
+*.nupkg
+!src/**/toolkit/**
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+*.user
+*.userosscache
+*.suo
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+[Xx]64/
+[Xx]86/
+[Bb]uild/
+[Bb]in/
+[Oo]bj/
+[Bb]ootstrap/
+node_modules/
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Dotnet
+global.json
+coverage/
+coverage.info
+*.coverage
+*.builds
+*.pidb
+*.meta
+*.idx
+*.order
+*.sln.docstates
+*.userprefs
+test-results/
+*.testlog
+*.log
+**/mockdata/
+
+# Publish
+publish/
+dist/
+
+# Temporary ASP.NET files
+TemporaryGeneratedFile_*.cs
+*~
+*.bak
+
+# ASP.NET Core
+[Cc]redentials/
+[bB]undleArtifacts/
+app_offline.htm
+web-dev-server/
+web-release-server/
+
+# ASP.NET Generated Code
+Generated_Code/
+
+# Lock backup file
+*.db-shm
+*.db-wal
+
+# Microsoft SQL Server Compact files
+*.sdf
+
+# Environment specific files
+.env
+.env.local
+.env.dev
+.env.test
+.env.prod
+
+# Local configuration
+appsettings.Development.json
+appsettings.json.bak
+
+# Binaries
+*.dll
+*.exe
+*.pdb
+*.nupkg
+*.snupkg
+*.zip
+*.tar.gz
+*.tmp
+*.msi
+*.msp
+*.cab
+*.pkg
+*.deb
+*.rpm
+*.apk
+*.app
+*.bat
+*.cmd
+*.com
+*.scr
+*.sys
+*.inf
+*.ini
+*.reg
+*.msc
+*.msi
+*.msp
+*.mst
+*.pub
+*.vbs
+*.wsf
+*.jar
+*.war
+*.ear
+*.sar
+*.har
+*.xap
+*.xpi
+*.crx
+*.jar.pack.xz
+*.pak
+*.so
+*.dylib
+*.dll.config
+*.exe.config
+*.config.install.xdt
+*.config.transform
+*.nuspec
+*.psmdcp
+*.application
+*.manifest
+*.dat
+*.cache
+*.tmp
+*.temp
+*.lock
+*.lockb
+*.tmp.*
+*.temp.*
+
+# Other
+.gitattributes
+*~
+
+# Exclude large files
+*.bin
+*.iso
+*.img
+*.dmg
+*.vmdk
+*.vdi
+*.ova
+*.ovf
+*.box
+*.vagrant
+*.swp
+*.swo
+
+# Exclude build artifacts
+**/bin/
+**/obj/
+**/out/
+**/Debug/
+**/Release/
+**/DebugPublic/
+**/ReleasePublic/
+**/x64/
+**/x86/
+**/build/
+**/bld/
+
+# Specific exclusions for your project
+**/HRManagementSystem.Web/bin/
+**/HRManagementSystem.Web/obj/

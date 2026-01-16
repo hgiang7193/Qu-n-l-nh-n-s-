@@ -9,6 +9,13 @@
     <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 mb-2">Dự án</h1>
         <p class="text-gray-600">Quản lý các dự án trong hệ thống</p>
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-4">
+                @TempData["ErrorMessage"]
+            </div>
+        }
     </div>
 
     <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

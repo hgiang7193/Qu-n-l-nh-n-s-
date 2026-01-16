@@ -1,0 +1,60 @@
+@model HRManagementSystem.Web.Models.User
+
+@{
+    ViewData["Title"] = "Xóa nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Xóa nhân viên</h1>
+        <p class="mt-2 text-gray-600">Bạn có chắc chắn muốn xóa nhân viên này?</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <dl class="space-y-4">
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Họ tên</dt>
+                <dd class="col-span-2">@($"{Model.FirstName} {Model.LastName}")</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Tên đăng nhập</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Username)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Email</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Email)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Mã nhân viên</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.EmployeeCode)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Phòng ban</dt>
+                <dd class="col-span-2">@(Model.Department?.Name ?? "Chưa có")</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Chức vụ</dt>
+                <dd class="col-span-2">@(Model.Position?.Name ?? "Chưa có")</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Ngày tuyển dụng</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.HireDate)</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <dt class="font-medium text-gray-700">Trạng thái</dt>
+                <dd class="col-span-2">@Html.DisplayFor(model => model.Status)</dd>
+            </div>
+        </dl>
+
+        <form asp-action="DeleteConfirmed" method="post" class="mt-8 flex space-x-4">
+            <input type="hidden" asp-for="Id" />
+            <button type="submit" class="btn btn-danger px-6 py-2 rounded-lg flex items-center">
+                <i class="fas fa-trash mr-2"></i> Xác nhận xóa
+            </button>
+            <a asp-action="Index" class="btn btn-secondary px-6 py-2 rounded-lg flex items-center">
+                <i class="fas fa-times mr-2"></i> Hủy bỏ
+            </a>
+        </form>
+    </div>
+</div>

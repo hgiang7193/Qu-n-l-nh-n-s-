@@ -66,6 +66,23 @@
                                 }
                             </span>
                         </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Dự án:</span>
+                            <span class="font-medium">
+                                @if (employee.ProjectAssignments != null && employee.ProjectAssignments.Any())
+                                {
+                                    @string.Join(", ", employee.ProjectAssignments.Take(2).Select(pa => pa.Project?.Name))
+                                    @if (employee.ProjectAssignments.Count() > 2)
+                                    {
+                                        <text>...</text>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>Chưa có</span>
+                                }
+                            </span>
+                        </div>
                     </div>
                     
                     <div class="flex items-center justify-between">

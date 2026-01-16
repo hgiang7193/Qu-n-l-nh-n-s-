@@ -479,6 +479,64 @@ namespace HRManagementSystem.Web.Services
             
             Console.WriteLine("Database populated with sample data successfully!");
         }
+        
+        public async Task CleanupOrphanedProjectAssignments()
+        {
+            try
+            {
+                // Remove project assignments for projects that don't exist
+                var invalidAssignments = await _context.ProjectAssignments
+                    .Where(pa => !_context.Projects.Any(p => p.Id == pa.ProjectId))
+                    .ToListAsync();
+                
+                if (invalidAssignments.Any())
+                {
+                    _context.ProjectAssignments.RemoveRange(invalidAssignments);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Removed {invalidAssignments.Count} invalid project assignments.");
+                }
+                
+                // Remove project assignments for employees that don't exist
+                var invalidEmployeeAssignments = await _context.ProjectAssignments
+                    .Where(pa => !_context.Users.Any(u => u.Id == pa.EmployeeId))
+                    .ToListAsync();
+                
+                if (invalidEmployeeAssignments.Any())
+                {
+                    _context.ProjectAssignments.RemoveRange(invalidEmployeeAssignments);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Removed {invalidEmployeeAssignments.Count} invalid employee assignments.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cleaning up orphaned project assignments: {ex.Message}");
+            }
+        }
+        
+        public async Task CleanupDuplicateProjectAssignments()
+        {
+            try
+            {
+                // Find duplicate project assignments (same employee and project)
+                var duplicateAssignments = await _context.ProjectAssignments
+                    .GroupBy(pa => new { pa.EmployeeId, pa.ProjectId })
+                    .Where(g => g.Count() > 1)
+                    .SelectMany(g => g.OrderByDescending(x => x.Id).Skip(1)) // Keep the most recent one
+                    .ToListAsync();
+                
+                if (duplicateAssignments.Any())
+                {
+                    _context.ProjectAssignments.RemoveRange(duplicateAssignments);
+                    await _context.SaveChangesAsync();
+                    Console.WriteLine($"Removed {duplicateAssignments.Count} duplicate project assignments.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error cleaning up duplicate project assignments: {ex.Message}");
+            }
+        }
 
         private async Task CreateBasicUsers()
         {

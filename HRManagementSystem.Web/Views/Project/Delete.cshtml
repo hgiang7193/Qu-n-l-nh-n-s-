@@ -9,6 +9,13 @@
     <div class="mb-6">
         <h1 class="text-3xl font-bold text-gray-900">Xóa dự án</h1>
         <p class="mt-2 text-gray-600">Bạn có chắc chắn muốn xóa dự án này?</p>
+        
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger mt-4">
+                @TempData["ErrorMessage"]
+            </div>
+        }
     </div>
 
     <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100">

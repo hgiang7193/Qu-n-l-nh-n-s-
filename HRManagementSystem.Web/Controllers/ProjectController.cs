@@ -31,11 +31,11 @@ namespace HRManagementSystem.Web.Controllers
             {
                 // Regular employee can only see projects they are assigned to
                 var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-                var assignedProjectIds = _context.ProjectAssignments
+                var assignedProjectIds = await _context.ProjectAssignments
                     .Where(pa => pa.EmployeeId == userId && pa.Status == "active")
                     .Select(pa => pa.ProjectId)
                     .Distinct()
-                    .ToList();
+                    .ToListAsync();
                 
                 var employeeProjects = await _context.Projects
                     .Include(p => p.ProjectManager)
@@ -100,6 +100,15 @@ namespace HRManagementSystem.Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Create([Bind("Name,Code,Description,StartDate,EndDate,Status,ProjectType,ProjectManagerId")] Project project)
         {
+            // Always populate the project managers list for the view
+            ViewBag.ProjectManagers = _context.Users
+                .Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = u.Id.ToString(), 
+                    Text = $"{u.FirstName} {u.LastName}" 
+                })
+                .ToList();
+                
             if (ModelState.IsValid)
             {
                 _context.Add(project);
@@ -107,7 +116,6 @@ namespace HRManagementSystem.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.ProjectManagers = _context.Users.ToList();
             return View(project);
         }
 
@@ -147,6 +155,15 @@ namespace HRManagementSystem.Web.Controllers
                 return NotFound();
             }
 
+            // Always populate the project managers list for the view
+            ViewBag.ProjectManagers = _context.Users
+                .Select(u => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = u.Id.ToString(), 
+                    Text = $"{u.FirstName} {u.LastName}" 
+                })
+                .ToList();
+                
             if (ModelState.IsValid)
             {
                 try
@@ -169,11 +186,11 @@ namespace HRManagementSystem.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.ProjectManagers = _context.Users.ToList();
             return View(project);
         }
 
         // GET: Project/Delete/5
+        [HttpGet]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -200,6 +217,18 @@ namespace HRManagementSystem.Web.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Check for any project assignments first
+            var projectAssignments = await _context.ProjectAssignments
+                .Where(pa => pa.ProjectId == id)
+                .ToListAsync();
+            
+            if (projectAssignments.Any())
+            {
+                // If there are assignments, show an error
+                TempData["ErrorMessage"] = "Không thể xóa dự án vì đã có nhân viên được phân công vào dự án này.";
+                return RedirectToAction(nameof(Index));
+            }
+            
             var project = await _context.Projects.FindAsync(id);
             if (project != null)
             {
@@ -224,11 +253,11 @@ namespace HRManagementSystem.Web.Controllers
             {
                 // Regular employee can only see projects they are assigned to
                 var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
-                var assignedProjectIds = _context.ProjectAssignments
-                    .Where(pa => pa.EmployeeId == userId)
+                var assignedProjectIds = await _context.ProjectAssignments
+                    .Where(pa => pa.EmployeeId == userId && pa.Status == "active")
                     .Select(pa => pa.ProjectId)
                     .Distinct()
-                    .ToList();
+                    .ToListAsync();
                 
                 var projects = await _context.Projects
                     .Where(p => assignedProjectIds.Contains(p.Id))

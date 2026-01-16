@@ -32,6 +32,20 @@ namespace HRManagementSystem.Web.Controllers.Api
             return Ok(_mapper.Map<IEnumerable<ProjectAssignmentDto>>(projectAssignments));
         }
 
+        // GET: api/ProjectAssignmentApi/my-assignments
+        [HttpGet("my-assignments")]
+        public async Task<ActionResult<IEnumerable<ProjectAssignmentDto>>> GetMyProjectAssignments()
+        {
+            var userId = int.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "0");
+            var projectAssignments = await _context.ProjectAssignments
+                .Include(pa => pa.Project)
+                .Include(pa => pa.Employee)
+                .Where(pa => pa.EmployeeId == userId && pa.Status == "active")
+                .ToListAsync();
+
+            return Ok(_mapper.Map<IEnumerable<ProjectAssignmentDto>>(projectAssignments));
+        }
+
         // GET: api/ProjectAssignmentApi/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProjectAssignmentDto>> GetProjectAssignment(int id)

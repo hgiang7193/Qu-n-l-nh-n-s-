@@ -1,0 +1,133 @@
+@model IEnumerable<HRManagementSystem.Web.Models.ProjectAssignment>
+
+@{
+    ViewData["Title"] = "Phân công nhân viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Phân công nhân viên vào dự án</h1>
+        <p class="text-gray-600">Quản lý các nhân viên được phân công vào dự án: <strong>@ViewBag.Project?.Name</strong></p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Current Assignments -->
+        <div class="lg:col-span-2">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Nhân viên hiện tại trong dự án</h3>
+                
+                @if (Model != null && Model.Any())
+                {
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nhân viên</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vai trò</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày bắt đầu</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach (var assignment in Model)
+                                {
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-medium text-gray-900">@assignment.Employee?.FullName</div>
+                                            <div class="text-sm text-gray-500">@assignment.Employee?.EmployeeCode</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">@assignment.Role</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            @assignment.StartDate.ToString("dd/MM/yyyy")
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @(assignment.Status == "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                                                @assignment.Status
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <form asp-action="RemoveAssignment" method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn gỡ nhân viên này khỏi dự án?');">
+                                                <input type="hidden" name="id" value="@assignment.Id" />
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Gỡ</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-8">
+                        <i class="fas fa-users text-5xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-medium text-gray-900 mb-1">Chưa có nhân viên nào</h3>
+                        <p class="text-gray-500">Chưa có nhân viên nào được phân công vào dự án này</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Add New Assignment -->
+        <div class="lg:col-span-1">
+            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Thêm nhân viên mới</h3>
+                
+                <form asp-action="AssignEmployee" method="post">
+                    <input type="hidden" name="projectId" value="@ViewBag.Project?.Id" />
+                    
+                    <div class="mb-4">
+                        <label for="employeeId" class="block text-sm font-medium text-gray-700 mb-1">Chọn nhân viên</label>
+                        <select name="employeeId" id="employeeId" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required>
+                            <option value="">-- Chọn nhân viên --</option>
+                            @if (ViewBag.AvailableEmployees != null)
+                            {
+                                @foreach (var employee in (IEnumerable<HRManagementSystem.Web.Models.User>)ViewBag.AvailableEmployees)
+                                {
+                                    <option value="@employee.Id">@employee.FullName (@employee.EmployeeCode)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Vai trò trong dự án</label>
+                        <input type="text" name="role" id="role" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" placeholder="Ví dụ: Developer, Tester..." required />
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Ngày bắt đầu</label>
+                        <input type="date" name="startDate" id="startDate" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50" required />
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-full">Phân công nhân viên</button>
+                </form>
+            </div>
+            
+            <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <h4 class="text-sm font-medium text-blue-800 mb-2">Thông tin dự án</h4>
+                <p class="text-sm text-blue-700"><strong>Tên:</strong> @ViewBag.Project?.Name</p>
+                <p class="text-sm text-blue-700"><strong>Mã:</strong> @ViewBag.Project?.Code</p>
+                <p class="text-sm text-blue-700"><strong>Trạng thái:</strong> @ViewBag.Project?.Status</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-6">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left mr-2"></i> Quay lại danh sách dự án
+        </a>
+    </div>
+</div>
+
+<script>
+    // Set today's date as default for start date
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+    });
+</script>

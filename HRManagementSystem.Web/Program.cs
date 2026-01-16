@@ -88,6 +88,8 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await initializer.InitializeAsync();
+        await initializer.CleanupOrphanedProjectAssignments();
+        await initializer.CleanupDuplicateProjectAssignments();
         logger.LogInformation("Database initialized successfully with seed data.");
     }
     catch (Exception ex)

@@ -70,6 +70,15 @@ namespace HRManagementSystem.Web.Controllers
                 return Forbid(); // Return forbidden if not admin and not their own profile
             }
 
+            // Include project assignments for the employee
+            employee = await _context.Users
+                .Include(u => u.Department)
+                .Include(u => u.Position)
+                .Include(u => u.Manager)
+                .Include(u => u.ProjectAssignments)
+                    .ThenInclude(pa => pa.Project)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
             return View(employee);
         }
 
@@ -77,9 +86,30 @@ namespace HRManagementSystem.Web.Controllers
         [Authorize(Roles = "admin")]
         public IActionResult Create()
         {
-            ViewBag.Departments = _context.Departments.ToList();
-            ViewBag.Positions = _context.Positions.ToList();
-            ViewBag.Managers = _context.Users.ToList();
+            ViewBag.Departments = _context.Departments
+                .Select(d => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = d.Id.ToString(), 
+                    Text = d.Name 
+                })
+                .ToList();
+            
+            ViewBag.Positions = _context.Positions
+                .Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = p.Id.ToString(), 
+                    Text = p.Name 
+                })
+                .ToList();
+            
+            ViewBag.Managers = _context.Users
+                .Select(m => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = m.Id.ToString(), 
+                    Text = $"{m.FirstName} {m.LastName}" 
+                })
+                .ToList();
+            
             return View();
         }
 
@@ -104,9 +134,30 @@ namespace HRManagementSystem.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Departments = _context.Departments.ToList();
-            ViewBag.Positions = _context.Positions.ToList();
-            ViewBag.Managers = _context.Users.ToList();
+            ViewBag.Departments = _context.Departments
+                .Select(d => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = d.Id.ToString(), 
+                    Text = d.Name 
+                })
+                .ToList();
+            
+            ViewBag.Positions = _context.Positions
+                .Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = p.Id.ToString(), 
+                    Text = p.Name 
+                })
+                .ToList();
+            
+            ViewBag.Managers = _context.Users
+                .Select(m => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = m.Id.ToString(), 
+                    Text = $"{m.FirstName} {m.LastName}" 
+                })
+                .ToList();
+            
             return View(user);
         }
 
@@ -125,9 +176,30 @@ namespace HRManagementSystem.Web.Controllers
                 return NotFound();
             }
 
-            ViewBag.Departments = _context.Departments.ToList();
-            ViewBag.Positions = _context.Positions.ToList();
-            ViewBag.Managers = _context.Users.ToList();
+            ViewBag.Departments = _context.Departments
+                .Select(d => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = d.Id.ToString(), 
+                    Text = d.Name 
+                })
+                .ToList();
+            
+            ViewBag.Positions = _context.Positions
+                .Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = p.Id.ToString(), 
+                    Text = p.Name 
+                })
+                .ToList();
+            
+            ViewBag.Managers = _context.Users
+                .Select(m => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = m.Id.ToString(), 
+                    Text = $"{m.FirstName} {m.LastName}" 
+                })
+                .ToList();
+            
             return View(user);
         }
 
@@ -164,9 +236,30 @@ namespace HRManagementSystem.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Departments = _context.Departments.ToList();
-            ViewBag.Positions = _context.Positions.ToList();
-            ViewBag.Managers = _context.Users.ToList();
+            ViewBag.Departments = _context.Departments
+                .Select(d => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = d.Id.ToString(), 
+                    Text = d.Name 
+                })
+                .ToList();
+            
+            ViewBag.Positions = _context.Positions
+                .Select(p => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = p.Id.ToString(), 
+                    Text = p.Name 
+                })
+                .ToList();
+            
+            ViewBag.Managers = _context.Users
+                .Select(m => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem 
+                { 
+                    Value = m.Id.ToString(), 
+                    Text = $"{m.FirstName} {m.LastName}" 
+                })
+                .ToList();
+            
             return View(user);
         }
 
